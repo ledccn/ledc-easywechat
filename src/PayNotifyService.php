@@ -9,7 +9,7 @@ use EasyWeChat\Pay\Application;
 use EasyWeChat\Pay\Message;
 use EasyWeChat\Pay\Server;
 use Exception;
-use Ledc\EasyWechat\Enums\WebmanEventEnum;
+use Ledc\EasyWechat\Enums\EventEnum;
 use Psr\Http\Message\ResponseInterface;
 use support\Log;
 use support\Request;
@@ -55,7 +55,7 @@ class PayNotifyService
             }
 
             // 微信支付：自定义处理所有事件消息
-            $responses = Event::dispatch(WebmanEventEnum::wechat_pay_any->value, $server->getRequestMessage());
+            $responses = Event::dispatch(EventEnum::wechat_pay_any->value, $server->getRequestMessage());
             foreach ($responses as $response) {
                 if ($response instanceof Response) {
                     return $response;
@@ -125,7 +125,7 @@ class PayNotifyService
     {
         $server->handlePaid(function (Message $message, Closure $next) use ($app) {
             // 调度事件
-            Event::emit(WebmanEventEnum::wechat_pay_success->value, $message);
+            Event::dispatch(EventEnum::wechat_pay_success->value, $message);
 
             // $message->out_trade_no 获取商户订单号
             // $message->payer['openid'] 获取支付者 openid
@@ -150,7 +150,7 @@ class PayNotifyService
     {
         $server->handleRefunded(function (Message $message, Closure $next) use ($app) {
             // 调度事件
-            Event::emit(WebmanEventEnum::wechat_pay_refunded->value, $message);
+            Event::dispatch(EventEnum::wechat_pay_refunded->value, $message);
 
             if (static::$debug) {
                 Log::debug('[退款成功事件]' . $message->toJson());

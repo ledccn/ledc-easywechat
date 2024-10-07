@@ -5,7 +5,7 @@ namespace Ledc\EasyWechat\Enums;
 /**
  * webman事件枚举
  */
-enum WebmanEventEnum: string
+enum EventEnum: string
 {
     /**
      * 微信支付回调通知：所有事件消息
