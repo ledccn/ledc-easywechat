@@ -20,7 +20,6 @@ use InvalidArgumentException;
 use Ledc\EasyWechat\Contracts\PayConfig;
 use Ledc\EasyWechat\Enums\TerminalEnum;
 use Ledc\EasyWechat\Utils as LedcUtils;
-use support\Container;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -95,16 +94,11 @@ readonly class PayService
      */
     public static function application(TerminalEnum $terminal = null): Application
     {
-        if (!Container::has(PayConfig::class)) {
-            throw new InvalidConfigException('容器内缺少获取微信支付配置的实例');
-        }
-
         /** @var PayConfig $instance */
-        $instance = Container::get(PayConfig::class);
+        $instance = PayConfigService::getPayConfig();
         $config = match (true) {
             $instance instanceof PayConfig => $instance->get($terminal),
             $instance instanceof Closure => call_user_func($instance, $terminal),
-            is_callable($instance) => call_user_func($instance, $terminal),
             default => throw new InvalidArgumentException('无法获取微信支付配置')
         };
 
