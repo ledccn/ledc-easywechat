@@ -79,7 +79,7 @@ readonly class PayService
     public function __construct(TerminalEnum $terminal)
     {
         $this->terminal = $terminal;
-        $this->app = static::application();
+        $this->app = static::application($terminal);
         $this->config = $this->app->getConfig();
         $this->client = $this->app->getClient();
         $this->utils = $this->app->getUtils();
@@ -87,7 +87,7 @@ readonly class PayService
     }
 
     /**
-     * 获取EasyWeChat微信支付实例（始终创建新实例）
+     * 创建EasyWeChat微信支付实例（始终创建新实例）
      * @param TerminalEnum|null $terminal
      * @return Application EasyWeChat微信支付实例
      * @throws InvalidConfigException
