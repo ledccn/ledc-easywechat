@@ -87,23 +87,33 @@ readonly class PayService
 
     /**
      * 创建EasyWeChat微信支付实例（始终创建新实例）
-     * @param TerminalEnum|null $terminal
+     * @param TerminalEnum|null $terminal 终端支付渠道
      * @return Application EasyWeChat微信支付实例
      * @throws InvalidConfigException
      * @throws KernelInvalidArgumentException
      */
     public static function application(TerminalEnum $terminal = null): Application
     {
-        $instance = PayConfigService::getPayConfig();
-        $config = match (true) {
-            $instance instanceof PayConfig => $instance->get($terminal),
-            $instance instanceof Closure => call_user_func($instance, $terminal),
-            default => throw new InvalidArgumentException('无法获取微信支付配置')
-        };
+        $config = static::getPayConfig($terminal);
 
         $app = new Application($config);
         $app->setValidator(new Validator($app->getMerchant()));
         return $app;
+    }
+
+    /**
+     * 获取微信支付配置数组
+     * @param TerminalEnum|null $terminal 终端支付渠道
+     * @return array
+     */
+    public static function getPayConfig(TerminalEnum $terminal = null): array
+    {
+        $instance = PayConfigService::getPayConfig();
+        return match (true) {
+            $instance instanceof PayConfig => $instance->get($terminal),
+            $instance instanceof Closure => call_user_func($instance, $terminal),
+            default => throw new InvalidArgumentException('无法获取微信支付配置')
+        };
     }
 
     /**
