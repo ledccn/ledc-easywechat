@@ -19,6 +19,7 @@ use Exception;
 use InvalidArgumentException;
 use Ledc\EasyWechat\Contracts\PayConfig;
 use Ledc\EasyWechat\Enums\TerminalEnum;
+use Ledc\EasyWechat\Utils as LedcUtils;
 use support\Container;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -290,6 +291,7 @@ readonly class PayService
 
     /**
      * 下载微信支付的平台证书
+     * - https://pay.weixin.qq.com/docs/merchant/apis/platform-certificate/api-v3-get-certificates/get.html
      * @param bool $verifySignature 是否验证签名
      * @return array
      * @throws BadResponseException
@@ -299,12 +301,23 @@ readonly class PayService
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
+     * @throws KernelInvalidArgumentException
      */
     public function certificates(bool $verifySignature = true): array
     {
         $response = $this->getClient()->get('v3/certificates');
 
-        return $this->getResultByResponse($response, $verifySignature);
+        $result = $this->getResultByResponse($response, $verifySignature);
+        if (empty($result['data'])) {
+            throw new ErrorException('【下载微信支付平台证书】响应错误：' . ($result['code'] ?? '') . '-' . ($result['message'] ?? ''));
+        }
+
+        // 解密微信支付平台证书
+        foreach ($result['data'] as &$cert) {
+            $cert['platform_cert_pem'] = LedcUtils::decryptCertificate($cert['encrypt_certificate'], $this->getMerchant()->getSecretKey());
+        }
+
+        return $result;
     }
 
     /**
