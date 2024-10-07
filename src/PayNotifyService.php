@@ -51,8 +51,7 @@ class PayNotifyService
             try {
                 $app->getValidator()->validate($app->getRequest());
             } catch (Exception|Throwable $e) {
-                Log::error('[微信支付回调通知]验签失败' . $e->getMessage());
-                throw new InvalidArgumentException('[微信支付回调通知]验签失败');
+                throw new InvalidArgumentException('验证签名失败');
             }
 
             // 微信支付：自定义处理所有事件消息
