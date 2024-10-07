@@ -94,7 +94,6 @@ readonly class PayService
      */
     public static function application(TerminalEnum $terminal = null): Application
     {
-        /** @var PayConfig $instance */
         $instance = PayConfigService::getPayConfig();
         $config = match (true) {
             $instance instanceof PayConfig => $instance->get($terminal),
@@ -158,7 +157,7 @@ readonly class PayService
             "out_trade_no" => $order['out_trade_no'],
             "notify_url" => $this->getConfig()->get('notify_url'),
             "amount" => [
-                "total" => intval($order['amount'] * 100),
+                "total" => (int)bcmul((string)$order['amount'], '100'),
             ],
             "payer" => [
                 "openid" => $order['openid']
@@ -195,7 +194,7 @@ readonly class PayService
             'out_trade_no' => $order['out_trade_no'],
             'notify_url' => $this->getConfig()->get('notify_url'),
             'amount' => [
-                'total' => intval($order['amount'] * 100),
+                'total' => (int)bcmul((string)$order['amount'], '100'),
             ],
             'attach' => $attach
         ]);
@@ -229,7 +228,7 @@ readonly class PayService
             'out_trade_no' => $order['out_trade_no'],
             'notify_url' => $this->getConfig()->get('notify_url'),
             'amount' => [
-                'total' => intval($order['amount'] * 100),
+                'total' => (int)bcmul((string)$order['amount'], '100'),
             ],
             'attach' => $attach,
             'scene_info' => [
@@ -273,7 +272,7 @@ readonly class PayService
             'out_trade_no' => $order['out_trade_no'],
             'notify_url' => $this->getConfig()->get('notify_url'),
             'amount' => [
-                'total' => intval($order['amount'] * 100),
+                'total' => (int)bcmul((string)$order['amount'], '100'),
             ],
             'attach' => $attach
         ]);
