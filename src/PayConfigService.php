@@ -9,7 +9,7 @@ use Ledc\EasyWechat\Contracts\PayConfig;
 /**
  * 微信支付配置服务类
  */
-final class PayConfigService
+class PayConfigService
 {
     /**
      * 微信支付配置
