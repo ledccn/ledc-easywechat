@@ -1,0 +1,21 @@
+{
+  "name": "ledc/easywechat",
+  "type": "library",
+  "license": "MIT",
+  "description": "Webman plugin ledc/easywechat",
+  "require": {
+    "php": ">=8.3",
+    "workerman/webman-framework": "^1.5",
+    "monolog/monolog": "^2.0",
+    "webman/event": "^1.0",
+    "w7corp/easywechat": "^6.15",
+    "ext-json": "*",
+    "ext-openssl": "*",
+    "ext-bcmath": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ledc\\EasyWechat\\": "src"
+    }
+  }
+}
