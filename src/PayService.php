@@ -2,7 +2,6 @@
 
 namespace Ledc\EasyWechat;
 
-use Closure;
 use EasyWeChat\Kernel\Exceptions\BadResponseException;
 use EasyWeChat\Kernel\Exceptions\InvalidArgumentException as KernelInvalidArgumentException;
 use EasyWeChat\Kernel\Exceptions\InvalidConfigException;
@@ -12,7 +11,6 @@ use Error;
 use ErrorException;
 use Exception;
 use InvalidArgumentException;
-use Ledc\EasyWechat\Contracts\PayConfig;
 use Ledc\EasyWechat\Enums\TerminalEnum;
 use Ledc\EasyWechat\Traits\InteractCommon;
 use Ledc\EasyWechat\Utils as LedcUtils;
@@ -66,26 +64,11 @@ readonly class PayService
      */
     public static function application(TerminalEnum $terminal = null): Application
     {
-        $config = static::getPayConfig($terminal);
+        $config = PayConfigService::getPayConfig($terminal);
 
         $app = new Application($config);
         $app->setValidator(new Validator($app->getMerchant()));
         return $app;
-    }
-
-    /**
-     * 获取微信支付配置数组
-     * @param TerminalEnum|null $terminal 终端支付渠道
-     * @return array
-     */
-    public static function getPayConfig(TerminalEnum $terminal = null): array
-    {
-        $instance = PayConfigService::getPayConfig();
-        return match (true) {
-            $instance instanceof PayConfig => $instance->get($terminal),
-            $instance instanceof Closure => call_user_func($instance, $terminal),
-            default => throw new InvalidArgumentException('无法获取微信支付配置')
-        };
     }
 
     /**
@@ -132,7 +115,7 @@ readonly class PayService
     {
         $app_id = $this->getAppId($order);
         /** @var Response|ResponseInterface $response */
-        $response = $this->getClient()->postJson("v3/pay/transactions/jsapi", [
+        $response = $this->getClient()->postJson('v3/pay/transactions/jsapi', [
             'appid' => $app_id,
             'mchid' => $this->getMerchantId(),
             //'profit_sharing' => (bool)($order['profit_sharing'] ?? false),
