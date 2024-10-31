@@ -306,7 +306,7 @@ readonly class PayService
      */
     public function getAppId(array $order = []): ?string
     {
-        $app_id = $order['app_id'] ?? $this->getConfig()->get('app_id');
+        $app_id = !empty($order['app_id']) ? $order['app_id'] : $this->getConfig()->get('app_id');
         if (empty($app_id)) {
             throw new InvalidArgumentException('配置、订单数据都未找到app_id');
         }
