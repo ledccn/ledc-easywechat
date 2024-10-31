@@ -118,7 +118,6 @@ readonly class PayService
         $response = $this->getClient()->postJson('v3/pay/transactions/jsapi', [
             'appid' => $app_id,
             'mchid' => $this->getMerchantId(),
-            //'profit_sharing' => (bool)($order['profit_sharing'] ?? false),
             'description' => $order['description'],
             'out_trade_no' => $order['out_trade_no'],
             'notify_url' => $this->getConfig()->get('notify_url'),
@@ -128,7 +127,10 @@ readonly class PayService
             'payer' => [
                 'openid' => $order['openid']
             ],
-            'attach' => $attach
+            'attach' => $attach,
+            'settle_info' => [
+                'profit_sharing' => (bool)($order['profit_sharing'] ?? false),
+            ]
         ]);
 
         $result = $this->getResultByResponse($response);
@@ -156,14 +158,16 @@ readonly class PayService
         $response = $this->getClient()->postJson('v3/pay/transactions/native', [
             'appid' => $app_id,
             'mchid' => $this->getMerchantId(),
-            //'profit_sharing' => (bool)($order['profit_sharing'] ?? false),
             'description' => $order['description'],
             'out_trade_no' => $order['out_trade_no'],
             'notify_url' => $this->getConfig()->get('notify_url'),
             'amount' => [
                 'total' => (int)bcmul((string)$order['amount'], '100'),
             ],
-            'attach' => $attach
+            'attach' => $attach,
+            'settle_info' => [
+                'profit_sharing' => (bool)($order['profit_sharing'] ?? false),
+            ]
         ]);
 
         $result = $this->getResultByResponse($response);
@@ -191,7 +195,6 @@ readonly class PayService
         $response = $this->getClient()->postJson('v3/pay/transactions/h5', [
             'appid' => $app_id,
             'mchid' => $this->getMerchantId(),
-            //'profit_sharing' => (bool)($order['profit_sharing'] ?? false),
             'description' => $order['description'],
             'out_trade_no' => $order['out_trade_no'],
             'notify_url' => $this->getConfig()->get('notify_url'),
@@ -204,6 +207,9 @@ readonly class PayService
                 'h5_info' => [
                     'type' => 'Wap',
                 ]
+            ],
+            'settle_info' => [
+                'profit_sharing' => (bool)($order['profit_sharing'] ?? false),
             ]
         ]);
 
@@ -236,14 +242,16 @@ readonly class PayService
         $response = $this->getClient()->postJson('v3/pay/transactions/app', [
             'appid' => $app_id,
             'mchid' => $this->getMerchantId(),
-            //'profit_sharing' => (bool)($order['profit_sharing'] ?? false),
             'description' => $order['description'],
             'out_trade_no' => $order['out_trade_no'],
             'notify_url' => $this->getConfig()->get('notify_url'),
             'amount' => [
                 'total' => (int)bcmul((string)$order['amount'], '100'),
             ],
-            'attach' => $attach
+            'attach' => $attach,
+            'settle_info' => [
+                'profit_sharing' => (bool)($order['profit_sharing'] ?? false),
+            ]
         ]);
 
         $result = $this->getResultByResponse($response);
