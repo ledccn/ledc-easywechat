@@ -5,9 +5,9 @@
   "description": "Webman plugin ledc/easywechat",
   "require": {
     "php": ">=8.3",
-    "workerman/webman-framework": "^1.5",
-    "monolog/monolog": "^2.0",
-    "webman/event": "^1.0",
+    "workerman/webman-framework": ">=1.5",
+    "monolog/monolog": ">=2.9 || >=3.5",
+    "webman/event": ">=1.0",
     "w7corp/easywechat": "^6.15",
     "ext-json": "*",
     "ext-openssl": "*",
