@@ -64,7 +64,7 @@ readonly class PayService
      */
     public static function application(TerminalEnum $terminal = null): Application
     {
-        $config = PayConfigService::getPayConfig($terminal);
+        $config = PayConfigManager::get($terminal);
 
         $app = new Application($config);
         $app->setValidator(new Validator($app->getMerchant()));

@@ -8,11 +8,11 @@
 开箱即用，只需要传入一个配置即可：
 
 ```php
-use Ledc\EasyWechat\PayConfigService;
+use Ledc\EasyWechat\PayConfigManager;
 use Ledc\EasyWechat\Enums\TerminalEnum;
 
 // 可在Bootstrap，全局注入配置
-PayConfigService::setPayConfig(function (TerminalEnum $terminalEnum) {
+PayConfigManager::set(function (TerminalEnum $terminalEnum) {
     // TODO... 从数据库读取配置，然后返回
     return [];
 });
@@ -31,7 +31,7 @@ $terminalEnum = TerminalEnum::from((int)$terminal);
 $payService = new PayService($terminalEnum);
 
 $attach = '业务附加数据（微信支付成功后，原样返回）';
-// 待支付的订单数据（可以看微信官方文档或跟踪进pay参数，按实际需要的传）
+// 待支付的订单数据（可以看微信官方文档或跟踪进pay方法查看参数，按实际需要的传）
 $order = [
     'description' => '购买会员',
     'out_trade_no' => uniqid(),
@@ -39,7 +39,7 @@ $order = [
 ];
 
 // 统一支付
-$result = $payService->pay(PayAttachEnums::member->value, $payOrder);
+$result = $payService->pay($attach, $order);
 ```
 
 ## 微信支付回调URL
