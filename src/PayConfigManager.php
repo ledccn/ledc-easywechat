@@ -14,9 +14,9 @@ class PayConfigManager
 {
     /**
      * 微信支付配置
-     * @var PayConfig|Closure
+     * @var PayConfig|Closure|null
      */
-    private static PayConfig|Closure $payConfig;
+    private static PayConfig|Closure|null $payConfig = null;
 
     /**
      * 获取微信支付配置数组
