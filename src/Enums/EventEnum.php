@@ -41,4 +41,9 @@ enum EventEnum: string
      * 微信公众号：用户取消关注
      */
     case wechat_account_unsubscribe = 'wechat.account.unsubscribe';
+
+    /**
+     * 微信公众号：微信网页授权登录成功后
+     */
+    case wechat_account_oauth_successful = 'wechat.account.oauth_successful';
 }

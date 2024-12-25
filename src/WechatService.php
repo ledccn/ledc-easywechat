@@ -38,10 +38,10 @@ class WechatService
     public static ?WechatConfig $wechatConfig = null;
 
     /**
-     * @param int|string|null $key
+     * @param int|string|\Webman\Http\Request|Request|null $key 配置标识
      * @return array|ConfigInterface
      */
-    final public static function getWechatConfig(int|string $key = null): array|ConfigInterface
+    final public static function getWechatConfig(int|string|\Webman\Http\Request|Request|null $key = null): array|ConfigInterface
     {
         if (is_null(self::$wechatConfig)) {
             throw new InvalidArgumentException('缺少获取微信公众号配置的实例');
@@ -52,28 +52,16 @@ class WechatService
 
     /**
      * 获取Application实例
-     * @param int|string|null $key 配置标识
+     * @param int|string|\Webman\Http\Request|Request|null $key 配置标识
      * @param string|null $name 缓存驱动标识
      * @return Application
      * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
      */
-    final public static function instance(int|string $key = null, string $name = null): Application
+    final public static function instance(int|string|\Webman\Http\Request|Request|null $key = null, string $name = null): Application
     {
         $app = new Application(static::getWechatConfig($key));
         $app->setCache(Cache::store($name));
         return $app;
-    }
-
-    /**
-     * 获取公众号实例
-     * - 可以重写此方法
-     * @param Request $request
-     * @return Application
-     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
-     */
-    protected static function getApplication(Request $request): Application
-    {
-        return static::instance();
     }
 
     /**
@@ -95,6 +83,34 @@ class WechatService
     }
 
     /**
+     * 获取用户基本信息
+     * - 认证服务号才有权限调用此接口
+     * @param Application $app
+     * @param string $openid 普通用户的标识，对当前公众号唯一
+     * @return array
+     */
+    final public static function getUserInfo(Application $app, string $openid): array
+    {
+        try {
+            $api = $app->getClient();
+            $options = [
+                'query' => [
+                    'openid' => $openid,
+                ]
+            ];
+            $response = $api->get('/cgi-bin/user/info', $options)->throw(false);
+            if ($response->isSuccessful()) {
+                return $response->toArray();
+            }
+
+            $resp = json_decode($response->toJson());
+            throw new InvalidArgumentException($resp->errmsg ?? '获取用户信息失败', $resp->errcode ?? 400);
+        } catch (Throwable $throwable) {
+            throw new InvalidArgumentException($throwable->getMessage(), $throwable->getCode());
+        }
+    }
+
+    /**
      * 微信公众号回调
      * @param Request $request
      * @return Response
@@ -102,7 +118,7 @@ class WechatService
     final public static function handle(Request $request): Response
     {
         try {
-            $app = static::getApplication($request);
+            $app = static::instance($request);
             $symfony_request = new SymfonyRequest($request->get(), $request->post(), [], $request->cookie(), [], [], $request->rawBody());
             $symfony_request->headers = new HeaderBag($request->header());
             $app->setRequestFromSymfonyRequest($symfony_request);
@@ -219,7 +235,7 @@ class WechatService
      * @param Message $message
      * @return QrSceneRocket|null
      */
-    protected static function subscribeScene(Message $message): ?QrSceneRocket
+    final public static function subscribeScene(Message $message): ?QrSceneRocket
     {
         $rocketQrScene = null;
         //事件KEY值

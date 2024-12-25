@@ -71,6 +71,25 @@ return [
 ];
 ```
 
+## 微信公众号消息回调URL
+
+`https://您的域名/wechat/account/callback`
+
+具体处理逻辑在：
+
+`\Ledc\EasyWechat\WechatService::handle`
+
+## 微信公众号网页授权登录授权完成后，重定向URL
+
+`https://您的域名/wechat/account/oauth/redirect`
+
+具体处理逻辑在：
+
+`\Ledc\EasyWechat\OfficialAccount\OauthMiddleware::redirect`
+
+注：使用微信公众号网页授权时，请在中间件配置中，添加此中间件
+
+`\Ledc\EasyWechat\OfficialAccount\OauthMiddleware::class`
 
 ## 二次开发
 
