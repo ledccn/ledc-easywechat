@@ -38,6 +38,7 @@ class WechatService
     public static ?WechatConfig $wechatConfig = null;
 
     /**
+     * 【获取】微信公众号配置
      * @param int|string|\Webman\Http\Request|Request|null $key 配置标识
      * @return array|ConfigInterface
      */
@@ -48,6 +49,16 @@ class WechatService
         }
 
         return self::$wechatConfig->get($key);
+    }
+
+    /**
+     * 【设置】微信公众号配置
+     * @param WechatConfig $config
+     * @return void
+     */
+    final public static function setWechatConfig(WechatConfig $config): void
+    {
+        self::$wechatConfig = $config;
     }
 
     /**
