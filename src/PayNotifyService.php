@@ -103,12 +103,12 @@ class PayNotifyService
          * - 以上便捷方法都只处理了成功状态，其它状态，可以通过自定义事件处理中间件的形式处理
          */
         $server->with(function (Message $message, Closure $next) use ($app) {
-            $event_type = $message->getEventType();
-            // $message->event_type 事件类型
-
             if (static::$debug) {
                 Log::debug('[微信支付回调通知][其它事件处理]' . $message->toJson());
             }
+
+            $event_type = $message->getEventType();
+            // $message->event_type 事件类型
             return $next($message);
         });
     }
@@ -124,6 +124,9 @@ class PayNotifyService
     protected static function handlePaySuccess(Server|ServerInterface $server, Application $app): void
     {
         $server->handlePaid(function (Message $message, Closure $next) use ($app) {
+            if (static::$debug) {
+                Log::debug('[支付成功事件]' . $message->toJson());
+            }
             // 调度事件
             Event::dispatch(EventEnum::wechat_pay_success->value, $message);
 
@@ -131,9 +134,6 @@ class PayNotifyService
             // $message->payer['openid'] 获取支付者 openid
             // 建议是拿订单号调用微信支付查询接口，以查询到的订单状态为准
 
-            if (static::$debug) {
-                Log::debug('[支付成功事件]' . $message->toJson());
-            }
             return $next($message);
         });
     }
@@ -149,12 +149,12 @@ class PayNotifyService
     protected static function handleRefunded(Server|ServerInterface $server, Application $app): void
     {
         $server->handleRefunded(function (Message $message, Closure $next) use ($app) {
-            // 调度事件
-            Event::dispatch(EventEnum::wechat_pay_refunded->value, $message);
-
             if (static::$debug) {
                 Log::debug('[退款成功事件]' . $message->toJson());
             }
+            // 调度事件
+            Event::dispatch(EventEnum::wechat_pay_refunded->value, $message);
+
             return $next($message);
         });
     }
