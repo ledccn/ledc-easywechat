@@ -20,3 +20,6 @@ Route::any('/wechat/account/callback', function (Request $request) {
 Route::any('/wechat/account/oauth/redirect', function (Request $request) {
     return OauthMiddleware::redirect($request);
 });
+
+// 获取微信公众号网页授权地址（前端可以自由定义授权成功后跳转到的目标页面）
+Route::get('/wechat/account/oauth2/authorize', fn(Request $request) => OauthMiddleware::getOauth2AuthorizeURL($request));

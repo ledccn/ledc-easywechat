@@ -157,12 +157,13 @@ class OauthMiddleware implements MiddlewareInterface
     }
 
     /**
-     * 获取微信网页授权重定向URL
+     * 获取微信公众号网页授权地址
      * - 前后分离使用
+     * - 前端可以自由定义授权成功后跳转到的目标页面
      * @param Request $request
      * @return Response
      */
-    public static function getRedirect(Request $request): Response
+    public static function getOauth2AuthorizeURL(Request $request): Response
     {
         try {
             $target = $request->get('target');
@@ -175,7 +176,7 @@ class OauthMiddleware implements MiddlewareInterface
             $redirect_url = $oauth->getConfig()->get('redirect_url');
             $redirectUrl = $oauth->withState(md5($request->sessionId()))->redirect($redirect_url . '?target=' . urlencode($target));
 
-            OauthMiddleware::setOauthSuccessfulRedirectUri($target);
+            static::setOauthSuccessfulRedirectUri($target);
 
             return json(['code' => 0, 'data' => ['redirect' => $redirectUrl], 'msg' => 'ok']);
         } catch (Throwable $e) {
