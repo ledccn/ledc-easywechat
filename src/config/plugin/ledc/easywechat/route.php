@@ -6,6 +6,10 @@ use Ledc\EasyWechat\WechatService;
 use support\Request;
 use Webman\Route;
 
+/**
+ * 这个文件会在更新时，强制覆盖
+ */
+
 // 微信支付回调
 Route::any('/wechat/pay/callback', function (Request $request) {
     return PayNotifyService::handle($request);

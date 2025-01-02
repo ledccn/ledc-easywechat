@@ -31,7 +31,7 @@ class Install
      */
     public static function uninstall(): void
     {
-        self::uninstallByRelation();
+        static::uninstallByRelation();
     }
 
     /**
@@ -48,7 +48,8 @@ class Install
                 }
             }
             //symlink(__DIR__ . "/$source", base_path()."/$dest");
-            copy_dir(__DIR__ . "/$source", base_path() . "/$dest");
+            // 强制覆盖 2025年1月2日
+            copy_dir(__DIR__ . "/$source", base_path() . "/$dest", true);
             echo "Create $dest" . PHP_EOL;
         }
     }
@@ -57,7 +58,7 @@ class Install
      * uninstallByRelation
      * @return void
      */
-    public static function uninstallByRelation()
+    public static function uninstallByRelation(): void
     {
         foreach (static::$pathRelation as $source => $dest) {
             $path = base_path() . "/$dest";
@@ -72,5 +73,4 @@ class Install
             remove_dir($path);
         }
     }
-
 }
