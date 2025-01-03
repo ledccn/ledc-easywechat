@@ -96,24 +96,24 @@ class OauthMiddleware implements MiddlewareInterface
             if (session('user') && session('user.id')) {
                 return $handler($request);
             }
-
-            if (static::isWechat() && !($request->isAjax() || $request->acceptJson())) {
-                $uri = $request->uri();
-
-                /** @var WeChat $oauth */
-                $oauth = WechatService::instance($request)->getOAuth();
-                $redirectUrl = $oauth->withState(md5($request->sessionId()))->redirect();
-
-                static::setOauthSuccessfulRedirectUri($uri);
-
-                return redirect($redirectUrl);
-            }
         } catch (ReflectionException $exception) {
             $msg = '控制器不存在';
             $code = 404;
         } catch (Throwable $throwable) {
             $msg = $throwable->getMessage();
             $code = 500;
+        }
+
+        if (static::isWechat() && !($request->isAjax() || $request->acceptJson())) {
+            $uri = $request->uri();
+
+            /** @var WeChat $oauth */
+            $oauth = WechatService::instance($request)->getOAuth();
+            $redirectUrl = $oauth->withState(md5($request->sessionId()))->redirect();
+
+            static::setOauthSuccessfulRedirectUri($uri);
+
+            return redirect($redirectUrl);
         }
 
         // 支持JSON返回格式
