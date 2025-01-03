@@ -97,7 +97,7 @@ class OauthMiddleware implements MiddlewareInterface
                 return $handler($request);
             }
 
-            if (static::isWechat() && false === $request->expectsJson()) {
+            if (static::isWechat() && false === ($request->isAjax() || $request->acceptJson())) {
                 $uri = $request->uri();
 
                 /** @var WeChat $oauth */
