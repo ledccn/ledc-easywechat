@@ -68,7 +68,7 @@ class WechatService
      * @return Application
      * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
      */
-    final public static function instance(int|string|\Webman\Http\Request|Request|null $key = null, string $name = null): Application
+    final public static function instance(int|string|\Webman\Http\Request|Request|null $key = null, ?string $name = null): Application
     {
         $app = new Application(static::getWechatConfig($key));
         $app->setCache(Cache::store($name));
