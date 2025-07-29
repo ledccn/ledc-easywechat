@@ -23,7 +23,7 @@ class PayConfigManager
      * @param TerminalEnum|null $terminal 终端支付渠道
      * @return array
      */
-    public static function get(TerminalEnum $terminal = null): array
+    public static function get(?TerminalEnum $terminal = null): array
     {
         if (is_null(self::$payConfig)) {
             throw new InvalidArgumentException('缺少获取微信支付配置的实例');
