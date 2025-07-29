@@ -14,5 +14,5 @@ interface PayConfig
      * @param TerminalEnum|null $terminal 终端支付渠道
      * @return array
      */
-    public function get(TerminalEnum $terminal = null): array;
+    public function get(?TerminalEnum $terminal = null): array;
 }
