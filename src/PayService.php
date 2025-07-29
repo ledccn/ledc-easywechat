@@ -62,7 +62,7 @@ readonly class PayService
      * @throws InvalidConfigException
      * @throws KernelInvalidArgumentException
      */
-    public static function application(TerminalEnum $terminal = null): Application
+    public static function application(?TerminalEnum $terminal = null): Application
     {
         $config = PayConfigManager::get($terminal);
 

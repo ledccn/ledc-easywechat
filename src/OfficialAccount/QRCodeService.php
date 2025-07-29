@@ -78,7 +78,7 @@ readonly class QRCodeService
      * @return Response|ResponseInterface
      * @throws TransportExceptionInterface
      */
-    public function temporary(int|string $sceneValue, int $expireSeconds = null): ResponseInterface|Response
+    public function temporary(int|string $sceneValue, ?int $expireSeconds = null): ResponseInterface|Response
     {
         if (is_int($sceneValue) && $sceneValue > 0) {
             $type = self::SCENE_QR_TEMPORARY;
@@ -115,7 +115,7 @@ readonly class QRCodeService
      * @return Response|ResponseInterface
      * @throws TransportExceptionInterface
      */
-    protected function create(string $actionName, array $actionInfo, bool $temporary = true, int $expireSeconds = null): ResponseInterface|Response
+    protected function create(string $actionName, array $actionInfo, bool $temporary = true, ?int $expireSeconds = null): ResponseInterface|Response
     {
         null !== $expireSeconds || $expireSeconds = 7 * self::DAY;
 
