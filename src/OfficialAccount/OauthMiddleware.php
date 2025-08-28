@@ -42,10 +42,10 @@ class OauthMiddleware implements MiddlewareInterface
     /**
      * @param \Webman\Http\Request|Request $request
      * @param callable $handler
-     * @return Response
+     * @return Response|\Webman\Http\Response
      * @throws Exception
      */
-    public function process(\Webman\Http\Request|Request $request, callable $handler): Response
+    public function process(\Webman\Http\Request|Request $request, callable $handler): Response|\Webman\Http\Response
     {
         // 当前请求的应用属于排除列表，则忽略
         if (in_array($request->app, $this->excludedApps)) {
