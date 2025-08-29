@@ -9,10 +9,12 @@ use Overtrue\Socialite\Providers\WeChat;
 use Overtrue\Socialite\User;
 use ReflectionClass;
 use ReflectionException;
-use support\Request;
-use support\Response;
+use support\Request as SupportRequest;
+use support\Response as SupportResponse;
 use Throwable;
 use Webman\Event\Event;
+use Webman\Http\Request;
+use Webman\Http\Response;
 use Webman\MiddlewareInterface;
 
 /**
@@ -40,12 +42,11 @@ class OauthMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param \Webman\Http\Request|Request $request
+     * @param Request|SupportRequest $request
      * @param callable $handler
-     * @return Response|\Webman\Http\Response
-     * @throws Exception
+     * @return Response|SupportResponse
      */
-    public function process(\Webman\Http\Request|Request $request, callable $handler): Response|\Webman\Http\Response
+    public function process(Request|SupportRequest $request, callable $handler): Response|SupportResponse
     {
         // 当前请求的应用属于排除列表，则忽略
         if (in_array($request->app, $this->excludedApps)) {
@@ -145,7 +146,6 @@ class OauthMiddleware implements MiddlewareInterface
     /**
      * 【获取】微信网页授权登录成功后，重定向到目标页面
      * @return string|null 返回uri，包括path和queryString部分。
-     * @throws Exception
      */
     public static function getOauthSuccessfulRedirectUri(): ?string
     {
@@ -167,10 +167,10 @@ class OauthMiddleware implements MiddlewareInterface
      * 获取微信公众号网页授权地址
      * - 前后分离使用
      * - 前端可以自由定义授权成功后跳转到的目标页面
-     * @param Request $request
-     * @return Response
+     * @param Request|SupportRequest $request
+     * @return SupportResponse
      */
-    public static function getOauth2AuthorizeURL(Request $request): Response
+    public static function getOauth2AuthorizeURL(Request|SupportRequest $request): SupportResponse
     {
         try {
             $target = $request->get('target');
@@ -193,10 +193,10 @@ class OauthMiddleware implements MiddlewareInterface
 
     /**
      * 微信公众号OAuth授权完成后的回调页地址
-     * @param Request $request
-     * @return Response
+     * @param Request|SupportRequest $request
+     * @return SupportResponse
      */
-    public static function redirect(Request $request): Response
+    public static function redirect(Request|SupportRequest $request): SupportResponse
     {
         try {
             $state = $request->get('state');
