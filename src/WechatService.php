@@ -16,6 +16,7 @@ use Ledc\EasyWechat\OfficialAccount\MsgTypeEventEnum;
 use Ledc\EasyWechat\OfficialAccount\QrSceneRocket;
 use Ledc\EasyWechat\OfficialAccount\Rocket;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use support\Cache;
 use support\Redis;
 use support\Request;
@@ -66,13 +67,16 @@ class WechatService
      * @param int|string|\Webman\Http\Request|Request|null $key 配置标识
      * @param string|null $name 缓存驱动标识
      * @return Application
-     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
      */
     final public static function instance(int|string|\Webman\Http\Request|Request|null $key = null, ?string $name = null): Application
     {
-        $app = new Application(static::getWechatConfig($key));
-        $app->setCache(Cache::store($name));
-        return $app;
+        try {
+            $app = new Application(static::getWechatConfig($key));
+            $app->setCache(Cache::store($name));
+            return $app;
+        } catch (Throwable $throwable) {
+            throw new RuntimeException($throwable->getMessage(), $throwable->getCode());
+        }
     }
 
     /**

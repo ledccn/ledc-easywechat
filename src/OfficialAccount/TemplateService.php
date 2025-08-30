@@ -4,6 +4,7 @@ namespace Ledc\EasyWechat\OfficialAccount;
 
 use EasyWeChat\Kernel\HttpClient\AccessTokenAwareClient;
 use Ledc\EasyWechat\Traits\HasParserResult;
+use Ledc\EasyWechat\WechatService;
 use RuntimeException;
 use Throwable;
 
@@ -16,9 +17,21 @@ readonly class TemplateService
 
     /**
      * 构造函数
+     * @param AccessTokenAwareClient $client
      */
     final public function __construct(protected AccessTokenAwareClient $client)
     {
+    }
+
+    /**
+     * 实例化服务号模板消息服务
+     * @param int|string|null $key
+     * @param string|null $name
+     * @return static
+     */
+    public static function make(int|string|null $key = null, ?string $name = null): static
+    {
+        return new static(WechatService::instance($key, $name)->getClient());
     }
 
     /**
