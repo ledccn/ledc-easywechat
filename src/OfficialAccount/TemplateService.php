@@ -17,7 +17,7 @@ readonly class TemplateService
     /**
      * 构造函数
      */
-    final protected function __construct(protected AccessTokenAwareClient $client)
+    final public function __construct(protected AccessTokenAwareClient $client)
     {
     }
 
