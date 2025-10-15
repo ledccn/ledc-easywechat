@@ -12,7 +12,6 @@ use ReflectionException;
 use support\Request as SupportRequest;
 use support\Response as SupportResponse;
 use Throwable;
-use Webman\Event\Event;
 use Webman\Http\Request;
 use Webman\Http\Response;
 use Webman\MiddlewareInterface;
@@ -214,7 +213,14 @@ class OauthMiddleware implements MiddlewareInterface
             /** @var User $user */
             $user = $oauth->userFromCode($code);
 
-            Event::dispatch(EventEnum::wechat_account_oauth_successful->value, [$user, $app]);
+            // 触发微信授权成功事件
+            EventEnum::wechat_account_oauth_successful->dispatch([$user, $app]);
+
+            // 前后端分离：支持JSON返回格式
+            if ($request->get('json') || $request->acceptJson()) {
+                $token = $request->sessionId();
+                return json(['code' => 0, 'data' => compact('token'), 'msg' => 'ok']);
+            }
 
             return redirect($target);
         } catch (Throwable $throwable) {

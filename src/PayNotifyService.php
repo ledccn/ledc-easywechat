@@ -17,7 +17,6 @@ use support\Response;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Throwable;
-use Webman\Event\Event;
 
 /**
  * 支付通知API
@@ -55,7 +54,7 @@ class PayNotifyService
             }
 
             // 微信支付：自定义处理所有事件消息
-            $responses = Event::dispatch(EventEnum::wechat_pay_any->value, $server->getRequestMessage());
+            $responses = EventEnum::wechat_pay_any->dispatch($server->getRequestMessage());
             foreach ($responses as $response) {
                 if ($response instanceof Response) {
                     return $response;
@@ -128,7 +127,7 @@ class PayNotifyService
                 Log::debug('[支付成功事件]' . $message->toJson());
             }
             // 调度事件
-            Event::dispatch(EventEnum::wechat_pay_success->value, $message);
+            EventEnum::wechat_pay_success->dispatch($message);
 
             // $message->out_trade_no 获取商户订单号
             // $message->payer['openid'] 获取支付者 openid
@@ -153,7 +152,7 @@ class PayNotifyService
                 Log::debug('[退款成功事件]' . $message->toJson());
             }
             // 调度事件
-            Event::dispatch(EventEnum::wechat_pay_refunded->value, $message);
+            EventEnum::wechat_pay_refunded->dispatch($message);
 
             return $next($message);
         });

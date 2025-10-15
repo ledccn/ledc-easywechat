@@ -2,6 +2,8 @@
 
 namespace Ledc\EasyWechat\Enums;
 
+use Webman\Event\Event;
+
 /**
  * webman事件枚举
  */
@@ -46,4 +48,46 @@ enum EventEnum: string
      * 微信公众号：微信网页授权登录成功后
      */
     case wechat_account_oauth_successful = 'wechat.account.oauth_successful';
+
+    /**
+     * 绑定事件
+     * @param callable $fn
+     * @return int
+     */
+    public function on(callable $fn): int
+    {
+        return Event::on($this->value, $fn);
+    }
+
+    /**
+     * 移除事件
+     * @param int $id
+     * @return int
+     */
+    public function off(int $id): int
+    {
+        return Event::off($this->value, $id);
+    }
+
+    /**
+     * 触发事件
+     * @param mixed $data
+     * @param bool $halt
+     * @return array|null|mixed
+     */
+    public function emit(mixed $data, bool $halt = false): mixed
+    {
+        return Event::emit($this->value, $data, $halt);
+    }
+
+    /**
+     * 触发事件
+     * @param mixed $data
+     * @param bool $halt
+     * @return array|null|mixed
+     */
+    public function dispatch(mixed $data, bool $halt = false): mixed
+    {
+        return Event::dispatch($this->value, $data, $halt);
+    }
 }

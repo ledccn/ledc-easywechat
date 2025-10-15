@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Throwable;
-use Webman\Event\Event;
 
 /**
  * 微信公众号服务
@@ -164,7 +163,7 @@ class WechatService
      */
     protected static function hookServerListener(Server|ServerInterface $server, Application $app): void
     {
-        Event::emit(EventEnum::wechat_account_callback->value, new Rocket($server, $app));
+        EventEnum::wechat_account_callback->emit(new Rocket($server, $app));
 
         /**
          * 【处理普通消息】注册指定消息类型的消息处理器
@@ -207,7 +206,7 @@ class WechatService
 
         // 处理 取消关注事件
         $server->addEventListener(MsgTypeEventEnum::unsubscribe->value, function (Message $message, Closure $next) {
-            Event::emit(EventEnum::wechat_account_unsubscribe->value, $message);
+            EventEnum::wechat_account_unsubscribe->emit($message);
             return $next($message);
         });
 
@@ -228,12 +227,12 @@ class WechatService
     public static function handlerSubscribeEventListener(Message $message, Closure $next): mixed
     {
         try {
-            Event::emit(EventEnum::wechat_account_subscribe->value, $message);
+            EventEnum::wechat_account_subscribe->emit($message);
 
             // 用户扫码关注公众号时，二维码携带的场景信息
             $rocketQrScene = static::subscribeScene($message);
             if ($rocketQrScene) {
-                $response = Event::dispatch(EventEnum::wechat_account_subscribe_qrscene->value, $rocketQrScene, true);
+                $response = EventEnum::wechat_account_subscribe_qrscene->dispatch($rocketQrScene, true);
                 if (is_string($response)) {
                     return $response;
                 }
