@@ -55,6 +55,21 @@ enum TemplateEnums: string
      * 配送订单审核通知
      */
     case DELIVERY_ORDER_AUDIT = '55303';
+    /**
+     * 排队进度通知
+     * @doc 所属类目：工具 -- 预约/报名
+     */
+    case QUEUE_PROGRESS = '43521';
+    /**
+     * 排队即将到号提醒
+     * @doc 所属类目：工具 -- 预约/报名
+     */
+    case QUEUE_COMING_UP = '43523';
+    /**
+     * 排队叫号通知
+     * @doc 所属类目：工具 -- 预约/报名
+     */
+    case QUEUE_CALLING = '43522';
 
     /**
      * 创建模板消息对象
