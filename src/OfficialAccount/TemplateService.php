@@ -42,10 +42,18 @@ readonly class TemplateService
     {
         try {
             $response = $this->client->get('cgi-bin/template/get_all_private_template');
-            $result = $this->parserResult($response);
-            $template_list = $result['template_list'] ?? [];
+            if ($response->isFailed()) {
+                throw new RuntimeException($response->getContent());
+            }
 
-            return $template_list ?: [];
+            $result = json_decode($response->getContent(), true);
+            $template_list = ($result['template_list'] ?? []) ?: [];
+            $errcode = $result['errcode'] ?? null;
+            $errmsg = $result['errmsg'] ?? '获取所有模板失败，微信未返回错误信息';
+            if ($template_list || is_null($errcode) || 0 === $errcode) {
+                return $template_list;
+            }
+            throw new RuntimeException($errmsg, $errcode);
         } catch (Throwable $throwable) {
             throw new RuntimeException($throwable->getMessage(), $throwable->getCode());
         }
