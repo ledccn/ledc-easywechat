@@ -184,7 +184,12 @@ class OauthMiddleware implements MiddlewareInterface
 
             static::setOauthSuccessfulRedirectUri($target);
 
-            return json(['code' => 0, 'data' => ['redirect' => $redirectUrl], 'msg' => 'ok']);
+            $data = [
+                'appid' => $oauth->getClientId(),
+                'redirect' => $redirectUrl
+            ];
+
+            return json(['code' => 0, 'data' => $data, 'msg' => 'ok']);
         } catch (Throwable $e) {
             return json(['code' => $e->getCode() ?: 1, 'data' => [], 'msg' => $e->getMessage()]);
         }
