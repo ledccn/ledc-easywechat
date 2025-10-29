@@ -180,13 +180,17 @@ class OauthMiddleware implements MiddlewareInterface
             /** @var WeChat $oauth */
             $oauth = WechatService::instance($request)->getOAuth();
             $redirect_url = $oauth->getConfig()->get('redirect_url');
-            $redirectUrl = $oauth->withState(md5($request->sessionId()))->redirect($redirect_url . '?target=' . urlencode($target));
+            $state = md5($request->sessionId());
+            $redirect = $oauth->withState($state)->redirect($redirect_url . '?target=' . urlencode($target));
 
             static::setOauthSuccessfulRedirectUri($target);
 
+            // 客户端拿到响应数据后，可以构造携带更多参数的重定向链接；也可以直接重定向至redirect的值。
             $data = [
                 'appid' => $oauth->getClientId(),
-                'redirect' => $redirectUrl
+                'redirect_url' => $redirect_url,
+                'state' => $state,
+                'redirect' => $redirect
             ];
 
             return json(['code' => 0, 'data' => $data, 'msg' => 'ok']);
