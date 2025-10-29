@@ -209,6 +209,10 @@ class OauthMiddleware implements MiddlewareInterface
         try {
             $state = $request->get('state');
             $code = $request->get('code');
+            if (empty($code) || empty($state)) {
+                return response('code或state参数必填');
+            }
+
             if (!hash_equals(md5($request->sessionId()), $state)) {
                 return \response('Oauth2的State参数无效！');
             }
